@@ -39,12 +39,18 @@ class ViewModel: ObservableObject {
     }
     
     func snapToPlace() {
-        let url = "https://api.foursquare.com/v2/venues/search?ll=\(LocationManager.shared.location),\(LocationManager.shared.location)&v=20160607&intent=checkin&limit=1&radius=4000&client_id=\(clientId)&client_secret=\(clientSecret)"
+        let urlString = "https://api.foursquare.com/v2/venues/search?ll=\(LocationManager.shared.location),\(LocationManager.shared.location)&v=20160607&intent=checkin&limit=1&radius=4000&client_id=\(clientId)&client_secret=\(clientSecret)"
+        
+        guard
+          let url = URL(string: urlString),
+            ((try? Data(contentsOf: url)) != nil)
+          else { return }
+        
+        let request = NSMutableURLRequest(url: url)
+
+        let session = URLSession.shared
             
-        let request = NSMutableURLRequest(url: URL(string: url)!)
-            let session = URLSession.shared
-            
-            request.httpMethod = "GET"
+        request.httpMethod = "GET"
             
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
             request.addValue("application/json", forHTTPHeaderField: "Accept")
